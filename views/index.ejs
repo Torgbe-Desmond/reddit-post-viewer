@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reddit Posts Viewer</title>
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="red"
+  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --primary: #ea580c;
+      --primary-dark: #c2410c;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --text-secondary: #475569;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 14px rgba(0,0,0,0.07);
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), #f97316);
+      color: white;
+      padding: 2.4rem 1rem;
+      text-align: center;
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 2.8rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .filter-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      background: var(--surface);
+      padding: 1.6rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 2.2rem;
+    }
+
+    .filter-form input,
+    .filter-form select {
+      padding: 0.8rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.97rem;
+      transition: all 0.15s;
+    }
+
+    .filter-form select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 0.9em;
+      padding-right: 2.5rem;
+    }
+
+    .filter-form input:focus,
+    .filter-form select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(234,88,12,0.18);
+    }
+
+    .filter-form .actions {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-form button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.6rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .filter-form button:hover {
+      background: var(--primary-dark);
+    }
+
+    .filter-form .reset {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .filter-form .reset:hover {
+      color: var(--primary);
+    }
+
+    .stats {
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+      margin: 0 0 1.6rem;
+      font-weight: 500;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--text-secondary);
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .post {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 1.8rem 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.15s ease;
+    }
+
+    .post:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .post-title {
+      margin: 0 0 0.8rem;
+      font-size: 1.32rem;
+      font-weight: 500;
+      line-height: 1.38;
+    }
+
+    .post-title a {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .post-title a:hover {
+      color: var(--primary);
+    }
+
+    .flair {
+      background: #fef3c7;
+      color: #92400e;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.28rem 0.7rem;
+      border-radius: 6px;
+      margin-left: 0.8rem;
+      vertical-align: middle;
+    }
+
+    .meta {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.4rem;
+    }
+
+    .meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .post-image {
+      margin: 1.2rem 0;
+      max-width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .post-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .content {
+      font-size: 0.98rem;
+      color: #1e293b;
+    }
+
+    /* Markdown styles */
+    .markdown-body {
+      line-height: 1.68;
+    }
+
+    .markdown-body p { margin: 1em 0; }
+    .markdown-body p:first-child { margin-top: 0.5em; }
+    .markdown-body a { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
+    .markdown-body a:hover { color: var(--primary-dark); text-decoration-thickness: 2px; }
+    .markdown-body blockquote {
+      margin: 1.4em 0;
+      padding-left: 1.2em;
+      border-left: 4px solid #cbd5e1;
+      color: #475569;
+    }
+    .markdown-body pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1.1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 1.4em 0;
+    }
+    .markdown-body code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: #f1f5f9;
+      padding: 0.18em 0.4em;
+      border-radius: 4px;
+      font-size: 0.92em;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2.8rem;
+      margin: 3.5rem 0 2.5rem;
+      padding: 1.4rem;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      font-size: 0.98rem;
+    }
+
+    .pagination a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+
+    .pagination a:hover {
+      background: rgba(234,88,12,0.09);
+    }
+
+    .pagination .current {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      header { font-size: 1.65rem; padding: 2rem 1rem; }
+      .filter-form { grid-template-columns: 1fr; gap: 1rem; }
+      .filter-form .actions { flex-direction: column; align-items: stretch; gap: 0.8rem; }
+      .pagination { flex-direction: column; gap: 1.2rem; padding: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>Reddit Posts Viewer</header>
+
+  <div class="container">
+
+    <form class="filter-form" method="GET">
+      <input type="text" name="author"    placeholder="Author"    value="<%= filters.author || '' %>" />
+      
+      <select name="subreddit">
+        <option value="all" <%= !filters.subreddit || filters.subreddit === 'all' ? 'selected' : '' %>>All Subreddits</option>
+        <option value="badbreath" <%= filters.subreddit === 'badbreath' ? 'selected' : '' %>>Badbreath</option>
+        <option value="lpr" <%= filters.subreddit === 'lpr' ? 'selected' : '' %>>LPR</option>
+        <option value="gerd" <%= filters.subreddit === 'gerd' ? 'selected' : '' %>>GERD</option>
+        <option value="sibo" <%= filters.subreddit === 'sibo' ? 'selected' : '' %>>SIBO</option>
+        <!-- Add more subreddits here when you collect them -->
+      </select>
+
+      <input type="text" name="flair"     placeholder="Flair"     value="<%= filters.flair || '' %>" />
+      <input type="text" name="keyword"   placeholder="Keyword"   value="<%= filters.keyword || '' %>" />
+
+      <div class="actions">
+        <button type="submit">Apply Filters</button>
+        <a href="/" class="reset">Reset Filters</a>
+      </div>
+    </form>
+
+    <div class="stats">
+      Showing <%= posts.length %> of <%= totalResults %> posts
+    </div>
+
+    <% if (posts.length === 0) { %>
+      <div class="empty-state">
+        <h3>No posts found</h3>
+        <p>Try adjusting your filters or check back later.</p>
+      </div>
+    <% } else { %>
+      <% posts.forEach(post => { %>
+        <article class="post">
+          <h2 class="post-title">
+            <a href="<%= post.data.url %>" target="_blank" rel="noopener noreferrer">
+              <%= post.data.title %>
+            </a>
+            <% if (post.data.link_flair_text) { %>
+              <span class="flair"><%= post.data.link_flair_text %></span>
+            <% } %>
+          </h2>
+
+          <div class="meta">
+            <span><i class="fa-solid fa-user"></i> <%= post.data.author || '[deleted]' %></span>
+            <span><i class="fa-solid fa-bookmark"></i> r/<%= post.data.subreddit %></span>
+            <span><i class="fa-solid fa-comment-alt"></i> <%= post.data.num_comments || 0 %></span>
+          </div>
+
+          <!-- Image support (very basic) -->
+          <% if (post.data.url?.match(/\.(jpg|jpeg|png|gif|webp)$/i)) { %>
+            <div class="post-image">
+              <img src="<%= post.data.url %>" alt="<%= post.data.title %>" loading="lazy">
+            </div>
+          <% } %>
+
+          <% if (post.data.selftext?.trim()) { %>
+            <div class="content markdown-body">
+              <%- renderMarkdown(post.data.selftext) %>
+            </div>
+          <% } %>
+        </article>
+      <% }) %>
+    <% } %>
+
+    <% if (totalPages > 1) { %>
+      <nav class="pagination" aria-label="Pagination">
+        <% if (currentPage > 1) { %>
+          <a href="?<%= new URLSearchParams({ ...filters, page: currentPage - 1 }).toString() %>" aria-label="Previous page">
+            <i class="fa-solid fa-chevron-left"></i> Previous
+          </a>
+        <% } %>
+
+        <span class="current">Page <%= currentPage %> of <%= totalPages %></span>
+
+        <% if (currentPage < totalPages) { %>
+          <a href="?<%= new URLSearchParams({ ...filters, page: currentPage + 1 }).toString() %>" aria-label="Next page">
+ 
