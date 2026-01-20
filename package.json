@@ -1,7 +1,7 @@
 {
   "name": "bdata",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
 "scripts": {
   "fetch": "node ./function/reddit-paginated-fetcher.js",
   "merge": "node merge-to-data.js",
