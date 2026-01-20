@@ -7,7 +7,7 @@ const createDOMPurify = require("dompurify");
 const { JSDOM } = require("jsdom");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // ─── Security: DOMPurify setup ───────────────────────────────────────
 const window = new JSDOM("").window;
