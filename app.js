@@ -17,7 +17,7 @@ const DOMPurify = createDOMPurify(window);
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
-app.set("view options", { async: true });
+// app.set("view options", { async: true });
 
 // ─── Helpers attached to locals ──────────────────────────────────────
 app.locals.renderMarkdown = (text) => {
