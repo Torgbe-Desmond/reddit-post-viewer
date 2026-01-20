@@ -31,8 +31,7 @@ app.locals.renderMarkdown = (text) => {
   });
   return DOMPurify.sanitize(dirty, {
     ADD_TAGS: ["iframe"],
-    ADD_ATTR: ["target", "rel", "allow", "allowfullscreen"],
-    FORBID_ATTR: ["style", "onerror", "onclick"],
+    ADD_ATTR: ["target", "rel"],
   });
 };
 
@@ -53,7 +52,7 @@ async function getPosts() {
       const posts = raw.trim() ? JSON.parse(raw) : [];
 
       // Sort by newest first (most common expectation)
-      cachedPosts = posts.sort((a, b) => 
+      cachedPosts = posts.sort((a, b) =>
         (b.data.created_utc || 0) - (a.data.created_utc || 0)
       );
 
@@ -72,23 +71,24 @@ async function getPosts() {
 app.get("/", async (req, res) => {
   try {
     let posts = [...await getPosts()];
+
     const { author, subreddit, flair, keyword, page = "1" } = req.query;
 
     // Filtering
     if (author) {
-      posts = posts.filter(p => 
+      posts = posts.filter(p =>
         p.data.author?.toLowerCase().includes(author.toLowerCase())
       );
     }
 
     if (subreddit && subreddit.toLowerCase() !== "all") {
-      posts = posts.filter(p => 
+      posts = posts.filter(p =>
         p.data.subreddit?.toLowerCase() === subreddit.toLowerCase()
       );
     }
 
     if (flair) {
-      posts = posts.filter(p => 
+      posts = posts.filter(p =>
         p.data.link_flair_text?.toLowerCase().includes(flair.toLowerCase())
       );
     }

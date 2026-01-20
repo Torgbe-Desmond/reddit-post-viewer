@@ -407,7 +407,6 @@
             if (post.data.media_metadata && typeof post.data.media_metadata === 'object') {
               Object.values(post.data.media_metadata).forEach(img => {
                 if (img?.status === 'valid' && img?.s?.u) {
-                  
                   galleryImages.push(cleanPreviewUrl(img?.s?.u));
                 }
               });
