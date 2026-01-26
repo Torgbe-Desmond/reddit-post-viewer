@@ -1,0 +1,14 @@
+<script>
+   const openFilterBtn = document.getElementById('open-filter-btn');
+  const filterSheet  = document.getElementById('mobile-filter-sheet');
+
+  openFilterBtn?.addEventListener('click', () => {
+    filterSheet.classList.toggle('open');
+  });
+
+  filterSheet?.addEventListener('click', (e) => {
+    if (e.target === filterSheet) {
+      filterSheet.classList.remove('open');
+    }
+  });
+</script>

@@ -1,0 +1,43 @@
+<!-- Desktop sidebar (visible on large screens) -->
+<aside class="sidebar">
+  <form class="filter-form" method="GET">
+    <input type="text" name="author" placeholder="Author" value="<%= filters.author || '' %>" />
+
+    <select name="subreddit">
+      <option value="all" <%= !filters.subreddit || filters.subreddit === 'all' ? 'selected' : '' %>>All Subreddits</option>
+      <option value="badbreath" <%= filters.subreddit === 'badbreath' ? 'selected' : '' %>>Badbreath</option>
+      <option value="lpr" <%= filters.subreddit === 'lpr' ? 'selected' : '' %>>LPR</option>
+      <option value="gerd" <%= filters.subreddit === 'gerd' ? 'selected' : '' %>>GERD</option>
+      <option value="sibo" <%= filters.subreddit === 'sibo' ? 'selected' : '' %>>SIBO</option>
+    </select>
+
+    <input type="text" name="flair" placeholder="Flair" value="<%= filters.flair || '' %>" />
+    <input type="text" name="keyword" placeholder="Keyword" value="<%= filters.keyword || '' %>" />
+
+    <div class="actions">
+      <button type="submit">Apply Filters</button>
+      <a href="/" class="reset">Reset Filters</a>
+    </div>
+  </form>
+</aside>
+
+<!-- Mobile bottom sheet (separate element – should be direct child of body or near end) -->
+<div class="mobile-filter-sheet" id="mobile-filter-sheet">
+  <form class="filter-form" method="GET">
+    <!-- same fields as above – keep them duplicated or use JS to sync if you want to avoid duplication -->
+    <input type="text" name="author" placeholder="Author" value="<%= filters.author || '' %>" />
+    <select name="subreddit">
+      <option value="all" <%= !filters.subreddit || filters.subreddit === 'all' ? 'selected' : '' %>>All Subreddits</option>
+      <option value="badbreath" <%= filters.subreddit === 'badbreath' ? 'selected' : '' %>>Badbreath</option>
+      <option value="lpr" <%= filters.subreddit === 'lpr' ? 'selected' : '' %>>LPR</option>
+      <option value="gerd" <%= filters.subreddit === 'gerd' ? 'selected' : '' %>>GERD</option>
+      <option value="sibo" <%= filters.subreddit === 'sibo' ? 'selected' : '' %>>SIBO</option>
+    </select>    <input type="text" name="flair" placeholder="Flair" value="<%= filters.flair || '' %>" />
+    <input type="text" name="keyword" placeholder="Keyword" value="<%= filters.keyword || '' %>" />
+
+    <div class="actions">
+      <button type="submit">Apply Filters</button>
+      <a href="/" class="reset">Reset Filters</a>
+    </div>
+  </form>
+</div>

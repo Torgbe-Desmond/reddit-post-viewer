@@ -2,6 +2,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs').promises;
 const path = require('path');
+const migrateRedditPost = require('./reddit-post-migration');
 
 /**
  * Fetches all available posts from a subreddit's .json endpoint using pagination
@@ -111,10 +112,8 @@ async function fetchRedditSubredditPaginated(
     } while (after);
 
     // Save complete dataset
-    const fullOutput = path.join(outputDir, `r-${subreddit}-complete-${new Date().toISOString().split('T')[0]}.json`);
-    await fs.writeFile(fullOutput, JSON.stringify(allPosts, null, 2));
-    console.log(`\nComplete dataset saved to: ${fullOutput}`);
-    console.log(`Total posts collected: ${allPosts.length}`);
+    const targetFile = path.join(__dirname, "../config/data.json");
+    migrateRedditPost(allPosts, targetFile);
 
     return {
       allPosts,
@@ -137,11 +136,12 @@ async function fetchRedditSubredditPaginated(
 // Example usage (run directly)
   (async () => {
     try {
-      await fetchRedditSubredditPaginated('sibo', {
-        maxPages: 30,          // safety limit
-        delayMs: 3200,         // be extra nice to Reddit
-        outputDir: './sibo-data',
-        saveEachPage: true,
+      const subreddit_name = 'sibo'
+      await fetchRedditSubredditPaginated(subreddit_name, {
+        maxPages: 30,         
+        delayMs: 3200,       
+        outputDir: `./${subreddit_name}-data`,
+        saveEachPage: false,
         headless: true
       });
     } catch (err) {

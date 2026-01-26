@@ -1,0 +1,76 @@
+<% if (posts.length===0) { %>
+      <div class="empty-state">
+        <h3>No posts found</h3>
+        <p>Try adjusting your filters or check back later.</p>
+      </div>
+      <% } else { %>
+        <% posts.forEach(post=> { %>
+          <article class="post">
+            <h2 class="post-title">
+              <a href="<%= post.data.url %>" target="_blank" rel="noopener noreferrer">
+                <%= post.data.title %>
+              </a>
+              <% if (post.data.link_flair_text) { %>
+                <span class="flair">
+                  <%= post.data.link_flair_text %>
+                </span>
+                <% } %>
+            </h2>
+
+            <div class="meta">
+              <span><i class="fa-solid fa-user"></i>
+                <%= post.data.author || '[deleted]' %>
+              </span>
+              <span><i class="fa-solid fa-bookmark"></i> r/<%= post.data.subreddit %></span>
+              <span><i class="fa-solid fa-comment-alt"></i>
+                <%= post.data.num_comments || 0 %>
+              </span>
+            </div>
+
+              <!-- Updated: Gallery + Single Image Support -->
+
+          <% 
+            let galleryImages = [];
+            function cleanPreviewUrl(url) {
+                if (!url || typeof url !== "string") return url;
+                const clean = url.split("?")[0];
+                return (/\.(jpg|jpeg|png|gif|webp)$/i.test(clean) ? clean : url).replace("preview","i");
+            };
+            // 1. Reddit Gallery (media_metadata)
+            if (post.data.media_metadata && typeof post.data.media_metadata === 'object') {
+              Object.values(post.data.media_metadata).forEach(img => {
+                if (img?.status === 'valid' && img?.s?.u) {
+                  galleryImages.push(cleanPreviewUrl(img?.s?.u));
+                }
+              });
+            }
+
+            // 2. Fallback: Single direct image URL
+            if (galleryImages.length === 0 && post.data.url?.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+              galleryImages.push(post.data.url);
+            }
+          %>
+
+          <% if (galleryImages.length > 0) { %>
+            <div class="post-images">
+              <% galleryImages.forEach((imgUrl, index) => { %>
+                <div class="post-image">
+                  <img 
+                    src="<%= imgUrl %>" 
+                    alt="<%= post.data.title %> - Image <%= index + 1 %>" 
+                    loading="lazy"
+                  >
+                </div>
+              <% }) %>
+            </div>
+          <% } %>
+
+        
+        <% if (post.data.selftext?.trim()) { %>
+          <div class="content markdown-body">
+            <%- renderMarkdown(post.data.selftext) %>
+          </div>
+          <% } %>
+          </article>
+          <% }) %>
+        <% } %>

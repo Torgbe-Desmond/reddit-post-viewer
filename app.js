@@ -110,7 +110,7 @@ app.get("/", async (req, res) => {
     const start = (currentPage - 1) * perPage;
     const paginatedPosts = posts.slice(start, start + perPage);
 
-    res.render("index", {
+    res.render("app", {
       posts: paginatedPosts,
       filters: req.query,
       currentPage,

@@ -1,0 +1,19 @@
+     <% if (totalPages> 1) { %>
+                <nav class="pagination" aria-label="Pagination">
+                  <% if (currentPage> 1) { %>
+                    <a href="?<%= new URLSearchParams({ ...filters, page: currentPage - 1 }).toString() %>"
+                      aria-label="Previous page">
+                      <i class="fa-solid fa-chevron-left"></i> Previous
+                    </a>
+                    <% } %>
+
+                      <span class="current">Page <%= currentPage %> of <%= totalPages %></span>
+
+                      <% if (currentPage < totalPages) { %>
+                        <a href="?<%= new URLSearchParams({ ...filters, page: currentPage + 1 }).toString() %>"
+                          aria-label="Next page">
+                          Next <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                        <% } %>
+                </nav>
+                <% } %>
