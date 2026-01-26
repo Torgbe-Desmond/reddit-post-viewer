@@ -6,7 +6,7 @@
   "fetch": "node ./function/reddit-paginated-fetcher.js",
   "merge": "node merge-to-data.js",
   "update": "npm run fetch && npm run merge",
-  "start": "node app.js"
+  "start": "nodemon app.js"
 },
   "keywords": [],
   "author": "",
