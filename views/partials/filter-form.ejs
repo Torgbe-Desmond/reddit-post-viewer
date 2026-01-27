@@ -9,6 +9,8 @@
       <option value="lpr" <%= filters.subreddit === 'lpr' ? 'selected' : '' %>>LPR</option>
       <option value="gerd" <%= filters.subreddit === 'gerd' ? 'selected' : '' %>>GERD</option>
       <option value="sibo" <%= filters.subreddit === 'sibo' ? 'selected' : '' %>>SIBO</option>
+      <option value="sinusitis" <%= filters.subreddit === 'sinusitis' ? 'selected' : '' %>>Sinusitis</option>
+      <option value="gastritis" <%= filters.subreddit === 'gastritis' ? 'selected' : '' %>>Gastritis</option>
     </select>
 
     <input type="text" name="flair" placeholder="Flair" value="<%= filters.flair || '' %>" />
