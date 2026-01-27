@@ -2,12 +2,11 @@
   "name": "bdata",
   "version": "1.0.0",
   "main": "app.js",
-"scripts": {
-  "fetch": "node ./function/reddit-paginated-fetcher.js",
-  "merge": "node merge-to-data.js",
-  "update": "npm run fetch && npm run merge",
-  "start": "node app.js"
-},
+  "scripts": {
+    "fetch:reddit": "node ./functions/reddit-paginated-fetcher.js",
+    "update": "npm run fetch && npm run merge",
+    "start": "node app.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -18,6 +17,6 @@
     "express": "^5.2.1",
     "jsdom": "^24.1.0",
     "marked": "^17.0.1",
-    "marked-cjs": "^17.0.3"
+    "marked-cjs": "^17.0.3",
   }
 }
