@@ -35,6 +35,34 @@ app.locals.renderMarkdown = (text) => {
   });
 };
 
+class SearchService {
+  constructor(list, searchQuery) {
+    this.list = list;
+    this.searchQuery = searchQuery.toLowerCase();
+  }
+  searchData() {
+    return this.list.filter(({ data }) => {
+      const text = `${data.title ?? ""} ${data.selftext ?? ""}`.toLowerCase();
+      return !text.includes(this.searchQuery);
+    });
+  }
+}
+
+function handleNegatedSearch(query, data) {
+  const negatedTerms = query
+    .split("!")
+    .map((q) => q.trim().toLowerCase())
+    .filter((q) => q.length > 0);
+
+  console.log("Negated search terms:", negatedTerms);
+
+  return data.filter(({ data }) => {
+    const text = `${data.title ?? ""} ${data.selftext ?? ""}`.toLowerCase();
+
+    // Exclude item if ANY negated term exists in text
+    return !negatedTerms.some((term) => text.includes(term));
+  });
+}
 
 // ─── Data caching ────────────────────────────────────────────────────
 const dataFile = path.join(__dirname, "./config/data.json");
@@ -52,8 +80,8 @@ async function getPosts() {
       const posts = raw.trim() ? JSON.parse(raw) : [];
 
       // Sort by newest first (most common expectation)
-      cachedPosts = posts.sort((a, b) =>
-        (b.data.created_utc || 0) - (a.data.created_utc || 0)
+      cachedPosts = posts.sort(
+        (a, b) => (b.data.created_utc || 0) - (a.data.created_utc || 0),
       );
 
       lastLoaded = now;
@@ -70,35 +98,44 @@ async function getPosts() {
 // ─── Main route ──────────────────────────────────────────────────────
 app.get("/", async (req, res) => {
   try {
-    let posts = [...await getPosts()];
+    let posts = [...(await getPosts())];
 
     const { author, subreddit, flair, keyword, page = "1" } = req.query;
 
     // Filtering
     if (author) {
-      posts = posts.filter(p =>
-        p.data.author?.toLowerCase().includes(author.toLowerCase())
+      posts = posts.filter((p) =>
+        p.data.author?.toLowerCase().includes(author.toLowerCase()),
       );
     }
 
     if (subreddit && subreddit.toLowerCase() !== "all") {
-      posts = posts.filter(p =>
-        p.data.subreddit?.toLowerCase() === subreddit.toLowerCase()
+      posts = posts.filter(
+        (p) => p.data.subreddit?.toLowerCase() === subreddit.toLowerCase(),
       );
     }
 
     if (flair) {
-      posts = posts.filter(p =>
-        p.data.link_flair_text?.toLowerCase().includes(flair.toLowerCase())
+      posts = posts.filter((p) =>
+        p.data.link_flair_text?.toLowerCase().includes(flair.toLowerCase()),
       );
     }
 
     if (keyword) {
-      const kw = keyword.toLowerCase();
-      posts = posts.filter(p =>
-        p.data.title?.toLowerCase().includes(kw) ||
-        p.data.selftext?.toLowerCase().includes(kw)
-      );
+      if (keyword.startsWith("!")) {
+        console.log("Performing negated search for:", keyword);
+        posts = handleNegatedSearch(keyword, posts);
+        console.log(
+          `Negated search results: ${posts.length} posts after filtering with "${keyword}"`,
+        );
+      } else {
+        const kw = keyword.toLowerCase();
+        posts = posts.filter(
+          (p) =>
+            p.data.title?.toLowerCase().includes(kw) ||
+            p.data.selftext?.toLowerCase().includes(kw),
+        );
+      }
     }
 
     // Pagination

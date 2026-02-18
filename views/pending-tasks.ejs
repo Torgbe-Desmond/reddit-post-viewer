@@ -1,0 +1,35 @@
+
+<section class="space-y-3">
+  <%- include('partials/task/task-card', {
+    title: "Mobile App Redesign",
+    dueDate: "2 days",
+    subtaskProgress: "2/4 Sub-tasks",
+    expanded: true,
+    subtasks: [
+      { title: "Design high-fidelity mockups", completed: false },
+      { title: "Prototype user flow", completed: false },
+      { title: "Draft wireframes", completed: true }
+    ]
+  }) %>
+</section>
+
+<section class="space-y-3">
+  <%- include('partials/task/task-card', {
+    title: "Weekly Grocery Shopping",
+    subtaskProgress: "0/3 Sub-tasks",
+    expanded: true,
+    subtasks: [
+      { title: "Organic vegetables", completed: false },
+      { title: "Whole grain bread", completed: false }
+    ]
+  }) %>
+</section>
+
+<section>
+  <%- include('partials/task/task-card', {
+    title: "Renew gym membership",
+    collapsed: true
+  }) %>
+</section>
+
+<%- include('../partials/featured-tip') %>
