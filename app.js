@@ -35,19 +35,6 @@ app.locals.renderMarkdown = (text) => {
   });
 };
 
-class SearchService {
-  constructor(list, searchQuery) {
-    this.list = list;
-    this.searchQuery = searchQuery.toLowerCase();
-  }
-  searchData() {
-    return this.list.filter(({ data }) => {
-      const text = `${data.title ?? ""} ${data.selftext ?? ""}`.toLowerCase();
-      return !text.includes(this.searchQuery);
-    });
-  }
-}
-
 function handleNegatedSearch(query, data) {
   const negatedTerms = query
     .split("!")
